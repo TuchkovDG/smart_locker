@@ -3,48 +3,39 @@
 namespace App\Repository;
 
 use App\Entity\Lock;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-/**
- * @method Lock|null find($id, $lockMode = null, $lockVersion = null)
- * @method Lock|null findOneBy(array $criteria, array $orderBy = null)
- * @method Lock[]    findAll()
- * @method Lock[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- */
-class LockRepository extends ServiceEntityRepository
+class LockRepository extends AbstractRepository
 {
-    public function __construct(RegistryInterface $registry)
+    /** @var EntityRepository */
+    private $lockRepository;
+
+    public function __construct(EntityManagerInterface $em)
     {
-        parent::__construct($registry, Lock::class);
+        $this->em = $em;
     }
 
-    // /**
-    //  * @return Lock[] Returns an array of Lock objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getRepository(): EntityRepository
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('l.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        if (null === $this->lockRepository) {
+            $this->lockRepository = $this->em->getRepository(Lock::class);
+        }
+        return $this->lockRepository;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Lock
+    public function find(int $lockId): ?Lock
     {
-        return $this->createQueryBuilder('l')
-            ->andWhere('l.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->getRepository()->find($lockId);
     }
-    */
+
+    public function save(Lock $lock): void
+    {
+        $this->saveEntity($lock);
+    }
+
+    public function delete(Lock $lock): void
+    {
+        $this->deleteEntity($lock);
+    }
 }

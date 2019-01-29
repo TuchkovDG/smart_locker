@@ -85,7 +85,7 @@ class CompanyController extends AbstractApiController
     }
 
     /**
-     * @Rest\Get("/company/{companyId}/locker")
+     * @Rest\Get("/company/{companyId}/lockers")
      */
     public function getCompanyLockers(int $companyId)
     {
@@ -95,5 +95,12 @@ class CompanyController extends AbstractApiController
         $lockers = $company->getLockers();
         //todo max depth
         return View::create($lockers, Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Post("/company/login")
+     */
+    public function login(Request $request): void
+    {
     }
 }

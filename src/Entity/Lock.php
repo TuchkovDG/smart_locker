@@ -35,6 +35,7 @@ class Lock
     private $user;
 
     /**
+     * @var Locker
      * @ORM\ManyToOne(targetEntity="App\Entity\Locker", inversedBy="locks")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -65,9 +66,9 @@ class Lock
         return $this->user;
     }
 
-    public function getLocker(): ?Locker
+    public function getAddress(): string
     {
-        return $this->locker;
+        return $this->locker->getAddress();
     }
 
     public function getReservedAt(): ?\DateTimeInterface

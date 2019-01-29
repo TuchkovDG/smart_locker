@@ -65,11 +65,6 @@ class Locker
         return $this->address;
     }
 
-    public function getCompany(): ?Company
-    {
-        return $this->company;
-    }
-
     /**
      * @return Collection|Lock[]
      */

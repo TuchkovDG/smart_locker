@@ -4,15 +4,11 @@ namespace App\Repository;
 
 use App\Entity\User;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class UserRepository
+class UserRepository extends AbstractRepository
 {
-    /** @var EntityManager */
-    private $em;
-
     /** @var EntityRepository */
     private $userRepository;
 
@@ -34,21 +30,18 @@ class UserRepository
         return $this->getRepository()->find($id);
     }
 
-    /**
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
-     */
+    public function findByUid(string $uid): ?User
+    {
+        return $this->getRepository()->findOneBy(['uid' => $uid]);
+    }
+
     public function save(User $user): void
     {
-        if (!$user->getId()) {
-            $this->em->persist($user);
-        }
-        $this->em->flush($user);
+        $this->saveEntity($user);
     }
 
     public function delete(User $user): void
     {
-        $this->em->remove($user);
-        $this->em->flush($user);
+        $this->deleteEntity($user);
     }
 }

@@ -6,13 +6,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use JMS\Serializer\Annotation as Serializer;
+
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Company
+class Company implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -33,6 +36,7 @@ class Company
      * @var string
      * @ORM\Column(type="string", length=255)]
      * @Assert\NotBlank()
+     * @Serializer\Exclude()
      */
     private $password;
 
@@ -53,6 +57,7 @@ class Company
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Locker", mappedBy="company")
+     * @Serializer\Exclude()
      */
     private $lockers;
 
@@ -82,7 +87,7 @@ class Company
 
     public function getPassword(): ?string
     {
-        return $this->password;
+        return password_hash($this->password, PASSWORD_BCRYPT);
     }
 
     public function getName(): ?string
@@ -164,5 +169,27 @@ class Company
     public function onUpdate(): void
     {
         $this->updatedAt = new \DateTime();
+    }
+
+    public function getUsername(): ?string
+    {
+        return $this->email;
+    }
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getRoles(): array
+    {
+        return ['ROLE_COMPANY'];
+    }
+
+    public function eraseCredentials(): void
+    {
     }
 }

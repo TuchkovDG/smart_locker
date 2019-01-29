@@ -10,6 +10,7 @@ use FOS\RestBundle\View\View;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserController extends AbstractApiController
 {
@@ -24,11 +25,16 @@ class UserController extends AbstractApiController
     /**
      * @Rest\Post("/user")
      */
-    public function createUser(Request $request): View
+    public function getOrCreateUser(Request $request): View
     {
-        $user = new User();
-        $this->handleRequest($user, $request);
-        $this->userRepository->save($user);
+        if (!($uid = $request->get('uid'))) {
+            throw new BadRequestHttpException('Uid is required');
+        }
+        if (!($user = $this->userRepository->findByUid($uid))) {
+            $user = new User();
+            $this->handleRequest($user, $request);
+            $this->userRepository->save($user);
+        }
         return View::create($user, Response::HTTP_CREATED);
     }
 
@@ -51,5 +57,17 @@ class UserController extends AbstractApiController
         }
         $this->userRepository->delete($user);
         return View::create([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Rest\Get("/user/{userId}/lock")
+     */
+    public function getUserLock(int $userId): View
+    {
+        if (!($user = $this->userRepository->find($userId))) {
+            throw new EntityNotFoundException('User with id ' . $userId . ' does not exist');
+        }
+        $locks = $user->getLocks();
+        return View::create($locks, Response::HTTP_OK);
     }
 }

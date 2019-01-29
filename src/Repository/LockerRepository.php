@@ -6,11 +6,8 @@ use App\Entity\Locker;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class LockerRepository
+class LockerRepository extends AbstractRepository
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
     /** @var EntityRepository */
     private $lockerRepository;
 
@@ -32,11 +29,14 @@ class LockerRepository
         return $this->getRepository()->find($lockerId);
     }
 
-    public function save(Locker $locker)
+    public function save(Locker $locker): void
     {
+        $this->saveRelatedEntities($locker->getLocks());
+        $this->saveEntity($locker);
     }
 
-    public function remove(Locker $locker)
+    public function remove(Locker $locker): void
     {
+        $this->deleteEntity($locker);
     }
 }

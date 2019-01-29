@@ -69,6 +69,6 @@ class LockerController extends AbstractApiController
             throw new EntityNotFoundException('Locker with id ' . $lockerId . ' does not exist');
         }
         $locks = $locker->getLocks();
-        return View::create($locker, Response::HTTP_OK);
+        return View::create($locks, Response::HTTP_OK);
     }
 }
