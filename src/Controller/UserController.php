@@ -70,4 +70,21 @@ class UserController extends AbstractApiController
         $locks = $user->getLocks();
         return View::create($locks, Response::HTTP_OK);
     }
+
+    /**
+     * @Rest\Get("/users")
+     */
+    public function getUsers(Request $request): View
+    {
+        $limit = $request->get('limit') ?: 1000;
+        $offset = $request->get('offset') ?: 0;
+
+        $users = $this->userRepository->getRepository()->createQueryBuilder('user')
+            ->orderBy('user.id')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+        return View::create($users, Response::HTTP_OK);
+    }
 }

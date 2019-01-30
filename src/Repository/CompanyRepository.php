@@ -29,6 +29,11 @@ class CompanyRepository extends AbstractRepository
     {
         return $this->getRepository()->find($companyId);
     }
+    
+    public function findByEmail(string $email): ?Company
+    {
+        return $this->getRepository()->findOneBy(['email' => $email]);
+    }
 
     public function save(Company $company): void
     {

@@ -13,6 +13,7 @@ use FOS\RestBundle\View\View;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CompanyController extends AbstractApiController
 {
@@ -31,6 +32,9 @@ class CompanyController extends AbstractApiController
     {
         $company = new Company();
         $this->handleRequest($company, $request);
+        if ($this->companyRepository->findByEmail($company->getEmail())) {
+            throw new BadRequestHttpException('Company with email' . $company->getEmail() . ' already exist');
+        }
         $this->companyRepository->save($company);
         return View::create($company, Response::HTTP_CREATED);
     }
@@ -70,6 +74,23 @@ class CompanyController extends AbstractApiController
     }
 
     /**
+     * @Rest\Get("/companies")
+     */
+    public function getCompanies(Request $request): View
+    {
+        $limit = $request->get('limit') ?: 1000;
+        $offset = $request->get('offset') ?: 0;
+
+        $companies = $this->companyRepository->getRepository()->createQueryBuilder('company')
+            ->orderBy('company.id')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+        return View::create($companies, Response::HTTP_OK);
+    }
+
+    /**
      * @Rest\Patch("/company/{companyId}/locker")
      */
     public function addLocker(int $companyId, Request $request): View
@@ -86,6 +107,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Get("/company/{companyId}/lockers")
+     * @Rest\Options("/company/{companyId}/lockers")
      */
     public function getCompanyLockers(int $companyId)
     {
@@ -99,8 +121,10 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Post("/company/login")
+     * @Rest\Options("/company/login")
      */
-    public function login(Request $request): void
+    public function companyLogin(Request $request): Response
     {
+        return new Response();
     }
 }

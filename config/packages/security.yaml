@@ -27,6 +27,7 @@ security:
 
         api:
             pattern:  ^/
+            methods: [POST, GET, PATCH, DELETE]
             stateless: true
             anonymous: false
             provider: entity_provider
