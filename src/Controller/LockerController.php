@@ -25,6 +25,7 @@ class LockerController extends AbstractApiController
 
     /**
      * @Rest\Patch("/locker/{lockerId}")
+     * @Rest\Options("/locker/{lockerId}")
      */
     public function updateLocker(int $lockerId, Request $request)
     {
@@ -38,6 +39,7 @@ class LockerController extends AbstractApiController
 
     /**
      * @Rest\Delete("/locker/{lockerId}")
+     * @Rest\Options("/locker/{lockerId}")
      */
     public function deleteLocker(int $lockerId)
     {
@@ -50,6 +52,7 @@ class LockerController extends AbstractApiController
 
     /**
      * @Rest\Patch("/locker/{lockerId}/lock")
+     * @Rest\Options("/locker/{lockerId}/lock")
      */
     public function addLockerLock(int $lockerId, Request $request)
     {
@@ -65,6 +68,7 @@ class LockerController extends AbstractApiController
 
     /**
      * @Rest\Get("/locker/{lockerId}/lock")
+     * @Rest\Options("/locker/{lockerId}/lock")
      */
     public function getLockerLocks(int $lockerId)
     {
@@ -77,6 +81,7 @@ class LockerController extends AbstractApiController
 
     /**
      * @Rest\Get("/lockers")
+     * @Rest\Options("/lockers")
      */
     public function getLockers(Request $request)
     {

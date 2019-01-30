@@ -15,6 +15,7 @@ class AdminController extends AbstractApiController
 
     /**
      * @Rest\Post("/admin/login")
+     * @Rest\Options("/admin/login")
      */
     public function adminLogin(Request $request): void
     {

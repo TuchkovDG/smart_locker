@@ -24,6 +24,7 @@ class UserController extends AbstractApiController
 
     /**
      * @Rest\Post("/user")
+     * @Rest\Options("/user")
      */
     public function getOrCreateUser(Request $request): View
     {
@@ -40,6 +41,7 @@ class UserController extends AbstractApiController
 
     /**
      * @Rest\Get("/user/{userId}")
+     * @Rest\Options("/user/{userId}")
      */
     public function getUser(int $userId): View
     {
@@ -49,6 +51,7 @@ class UserController extends AbstractApiController
 
     /**
      * @Rest\Delete("/user/{userId}")
+     * @Rest\Options("/user/{userId}")
      */
     public function deleteUser(int $userId): View
     {
@@ -61,6 +64,7 @@ class UserController extends AbstractApiController
 
     /**
      * @Rest\Get("/user/{userId}/lock")
+     * @Rest\Options("/user/{userId}/lock")
      */
     public function getUserLock(int $userId): View
     {
@@ -73,6 +77,7 @@ class UserController extends AbstractApiController
 
     /**
      * @Rest\Get("/users")
+     * @Rest\Options("/users")
      */
     public function getUsers(Request $request): View
     {

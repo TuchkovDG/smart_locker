@@ -27,6 +27,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Post("/company")
+     * @Rest\Options("/company")
      */
     public function createCompany(Request $request): View
     {
@@ -41,6 +42,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Get("/company/{companyId}")
+     * @Rest\Options("/company/{companyId}")
      */
     public function getCompany(int $companyId): View
     {
@@ -50,6 +52,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Patch("/company/{companyId}")
+     * @Rest\Options("/company/{companyId}")
      */
     public function updateCompany(int $companyId, Request $request): View
     {
@@ -63,6 +66,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Delete("/company/{companyId}")
+     * @Rest\Options("/company/{companyId}")
      */
     public function deleteCompany(int $companyId)
     {
@@ -75,6 +79,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Get("/companies")
+     * @Rest\Options("/companies")
      */
     public function getCompanies(Request $request): View
     {
@@ -92,6 +97,7 @@ class CompanyController extends AbstractApiController
 
     /**
      * @Rest\Patch("/company/{companyId}/locker")
+     * @Rest\Options("/company/{companyId}/locker")
      */
     public function addLocker(int $companyId, Request $request): View
     {
