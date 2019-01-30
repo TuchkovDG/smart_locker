@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Locker
+class LockerRequest
 {
     /**
      * @ORM\Id()
@@ -44,24 +42,16 @@ class Locker
     private $company;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Lock", mappedBy="locker")
+     * @var string
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
-    private $locks;
+    private $lockCount;
 
     /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
-
-    public function __construct()
-    {
-        $this->locks = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -78,23 +68,14 @@ class Locker
         return $this->name;
     }
 
-    /**
-     * @return Collection|Lock[]
-     */
-    public function getLocks(): Collection
+    public function getLockCount(): ?string
     {
-        return $this->locks;
+        return $this->lockCount;
     }
-
 
     public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
-    }
-
-    public function getUpdatedAt(): ?\DateTime
-    {
-        return $this->updatedAt;
     }
 
     public function setAddress(string $address): void
@@ -112,22 +93,9 @@ class Locker
         $this->company = $company;
     }
 
-    public function addLock(Lock $lock): void
+    public function setLockCount(string $lockCount): void
     {
-        if (!$this->locks->contains($lock)) {
-            $this->locks[] = $lock;
-            $lock->setLocker($this);
-        }
-    }
-
-    public function removeLock(Lock $lock): void
-    {
-        if ($this->locks->contains($lock)) {
-            $this->locks->removeElement($lock);
-            if ($lock->getLocker() === $this) {
-                $lock->setLocker(null);
-            }
-        }
+        $this->lockCount = $lockCount;
     }
 
     /**
@@ -136,14 +104,5 @@ class Locker
     public function onSave(): void
     {
         $this->createdAt = new \DateTime();
-        $this->updatedAt = new \DateTime();
-    }
-
-    /**
-     * @ORM\PreFlush()
-     */
-    public function onUpdate(): void
-    {
-        $this->updatedAt = new \DateTime();
     }
 }

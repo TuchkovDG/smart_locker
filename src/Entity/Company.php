@@ -87,7 +87,7 @@ class Company implements UserInterface
 
     public function getPassword(): ?string
     {
-        return password_hash($this->password, PASSWORD_BCRYPT);
+        return $this->password;
     }
 
     public function getName(): ?string
@@ -123,7 +123,7 @@ class Company implements UserInterface
 
     public function setPassword(string $password): void
     {
-        $this->password = $password;
+        $this->password = password_hash($password, PASSWORD_BCRYPT);
     }
 
     public function setName(string $name): void
@@ -148,9 +148,7 @@ class Company implements UserInterface
     {
         if ($this->lockers->contains($locker)) {
             $this->lockers->removeElement($locker);
-            if ($locker->getCompany() === $this) {
-                $locker->setCompany(null);
-            }
+            $locker->setCompany(null);
         }
     }
 

@@ -29,6 +29,11 @@ class LockRepository extends AbstractRepository
         return $this->getRepository()->find($lockId);
     }
 
+    public function findAllByStatus(int $status): array
+    {
+        return $this->getRepository()->findBy(['status' => $status]);
+    }
+
     public function save(Lock $lock): void
     {
         $this->saveEntity($lock);

@@ -11,8 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Lock
 {
-    private const RESERVED_STATUS = '1';
-    private const FREE_STATUS = '0';
+    public const RESERVED_STATUS = 1;
+    public const FREE_STATUS = 0;
 
     /**
      * @ORM\Id()
@@ -28,6 +28,14 @@ class Lock
      * @Assert\Choice({0, 1})
      */
     private $status = 0;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     * @Assert\NotBlank()
+     * @Assert\Choice({true, false})
+     */
+    private $isOpen = false;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="locks")
@@ -46,6 +54,11 @@ class Lock
      */
     private $reservedAt;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $openedAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -56,19 +69,9 @@ class Lock
         return $this->status;
     }
 
-    public function isReserved(): bool
+    public function isOpen(): ?bool
     {
-        return $this->status === self::RESERVED_STATUS;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function getAddress(): string
-    {
-        return $this->locker->getAddress();
+        return $this->isOpen;
     }
 
     public function getReservedAt(): ?\DateTimeInterface
@@ -76,14 +79,19 @@ class Lock
         return $this->reservedAt;
     }
 
-    public function setUser(?User $user): void
+    public function getOpenedAt(): ?\DateTimeInterface
     {
-        $this->user = $user;
+        return $this->openedAt;
     }
 
-    public function setLocker(?Locker $locker): void
+    public function getAddress(): string
     {
-        $this->locker = $locker;
+        return $this->locker->getAddress();
+    }
+
+    public function isReserved(): bool
+    {
+        return $this->status === self::RESERVED_STATUS;
     }
 
     public function reserve(): void
@@ -96,5 +104,27 @@ class Lock
     {
         $this->status = self::FREE_STATUS;
         $this->reservedAt = null;
+    }
+
+    public function open(): void
+    {
+        $this->isOpen = true;
+        $this->openedAt = new \DateTime();
+    }
+
+    public function close(): void
+    {
+        $this->isOpen = false;
+        $this->openedAt = null;
+    }
+
+    public function setUser(?User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function setLocker(?Locker $locker): void
+    {
+        $this->locker = $locker;
     }
 }

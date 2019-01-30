@@ -37,6 +37,7 @@ class UserRepository extends AbstractRepository
 
     public function save(User $user): void
     {
+        $this->saveRelatedEntities($user->getLocks());
         $this->saveEntity($user);
     }
 

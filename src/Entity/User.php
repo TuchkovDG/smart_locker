@@ -81,12 +81,9 @@ class User
 
     public function removeLock(Lock $lock): void
     {
-        //todo checks
         if ($this->locks->contains($lock)) {
             $this->locks->removeElement($lock);
-            if ($lock->getUser() === $this) {
-                $lock->setUser(null);
-            }
+            $lock->setUser(null);
         }
     }
 

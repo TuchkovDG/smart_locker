@@ -16,3 +16,7 @@ services:
     App\EventListener\AuthenticationSuccessListener:
         tags:
             - { name: kernel.event_subscriber }
+
+    App\EventListener\JWTCreatedListener:
+        tags:
+            - { name: kernel.event_subscriber }

@@ -63,10 +63,10 @@ class UserController extends AbstractApiController
     }
 
     /**
-     * @Rest\Get("/user/{userId}/lock")
-     * @Rest\Options("/user/{userId}/lock")
+     * @Rest\Get("/user/{userId}/locks")
+     * @Rest\Options("/user/{userId}/locks")
      */
-    public function getUserLock(int $userId): View
+    public function getUserLocks(int $userId): View
     {
         if (!($user = $this->userRepository->find($userId))) {
             throw new EntityNotFoundException('User with id ' . $userId . ' does not exist');

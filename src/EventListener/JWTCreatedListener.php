@@ -2,17 +2,16 @@
 
 namespace App\EventListener;
 
-use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
-
 use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializerInterface;
+
+use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
-
-class AuthenticationSuccessListener implements EventSubscriberInterface
+class JWTCreatedListener implements EventSubscriberInterface
 {
     /** @var Serializer */
     private $serializer;
@@ -25,20 +24,20 @@ class AuthenticationSuccessListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'lexik_jwt_authentication.on_authentication_success' => 'onAuthenticationSuccess'
+            'lexik_jwt_authentication.on_jwt_created' => 'onJWTCreated'
         ];
     }
 
-    public function onAuthenticationSuccess(AuthenticationSuccessEvent $event): void
+    public function onJWTCreated(JWTCreatedEvent $event): void
     {
-        $data = $event->getData();
         $user = $event->getUser();
+        $payload = $event->getData();
 
         if (!($user instanceof UserInterface)) {
             return;
         }
 
-        $data['user'] = [$this->serializer->toArray($user)];
-        $event->setData($data);
+        $payload['user'] = $this->serializer->toArray($user);
+        $event->setData($payload);
     }
 }
