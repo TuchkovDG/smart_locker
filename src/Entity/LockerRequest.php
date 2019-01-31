@@ -47,7 +47,7 @@ class LockerRequest
     /**
      * @var string
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank()
+     * @Assert\NotNull()
      * @Serializer\SerializedName("lock_count")
      */
     private $lockCount;

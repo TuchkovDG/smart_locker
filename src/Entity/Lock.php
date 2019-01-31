@@ -28,7 +28,7 @@ class Lock
     /**
      * @var integer
      * @ORM\Column(type="smallint")
-     * @Assert\NotBlank()
+     * @Assert\NotNull()
      * @Assert\Choice({0, 1})
      */
     private $status = 0;
@@ -36,7 +36,7 @@ class Lock
     /**
      * @var bool
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank()
+     * @Assert\NotNull()
      * @Assert\Choice({true, false})
      * @SerializedName("is_open")
      */

@@ -89,7 +89,7 @@ class IotController extends AbstractApiController
     }
 
     /**
-     * @Rest\Post("/user/{userID}/unreserve_all")
+     * @Rest\Post("/user/{userId}/unreserve_all")
      */
     public function unReserveAllUserLocks(int $userId): View
     {

@@ -22,8 +22,8 @@ class LockController extends AbstractApiController
     }
 
     /**
-     * @Rest\Get("/lock/{lockID}")
-     * @Rest\Options("/lock/{lockID}")
+     * @Rest\Get("/lock/{lockId}")
+     * @Rest\Options("/lock/{lockId}")
      */
     public function getLock(int $lockId): View
     {
@@ -32,8 +32,8 @@ class LockController extends AbstractApiController
     }
 
     /**
-     * @Rest\Patch("/lock/{lockID}")
-     * @Rest\Options("/lock/{lockID}")
+     * @Rest\Patch("/lock/{lockId}")
+     * @Rest\Options("/lock/{lockId}")
      */
     public function updateLock(int $lockId, Request $request): View
     {
@@ -47,8 +47,8 @@ class LockController extends AbstractApiController
 
 
     /**
-     * @Rest\Delete("/lock/{lockID}")
-     * @Rest\Options("/lock/{lockID}")
+     * @Rest\Delete("/lock/{lockId}")
+     * @Rest\Options("/lock/{lockId}")
      */
     public function deleteLock(int $lockId): View
     {
