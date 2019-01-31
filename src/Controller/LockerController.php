@@ -99,6 +99,12 @@ class LockerController extends AbstractApiController
         $limit = $request->get('limit') ?: 1000;
         $offset = $request->get('offset') ?: 0;
 
-        ``
+        $lockers = $this->lockerRepository->getRepository()->createQueryBuilder('locker')
+            ->orderBy('locker.id')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+        return View::create($lockers, Response::HTTP_OK);
     }
 }
