@@ -15,6 +15,7 @@ use Doctrine\ORM\EntityNotFoundException;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Controller\Annotations as Rest;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class LockerRequestController extends AbstractApiController
@@ -87,5 +88,24 @@ class LockerRequestController extends AbstractApiController
         }
         $this->lockerRequestRepository->delete($lockerRequest);
         return View::create([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Rest\Get("/locker_requests")
+     * @Rest\Options("/locker_requests")
+     */
+    public function getLockRequests(Request $request): View
+    {
+        $limit = $request->get('limit') ?: 1000;
+        $offset = $request->get('offset') ?: 0;
+
+        $lockRequests = $this->lockerRequestRepository->getRepository()
+            ->createQueryBuilder('locker_request')
+            ->orderBy('locker_request.id')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getResult();
+        return View::create($lockRequests, Response::HTTP_OK);
     }
 }
