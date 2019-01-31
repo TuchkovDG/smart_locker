@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Doctrine\ORM\Mapping\Column;
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -32,11 +33,13 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Lock", mappedBy="user")
+     * @Serializer\Exclude()
      */
     private $locks;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("created_at")
      */
     private $createdAt;
 

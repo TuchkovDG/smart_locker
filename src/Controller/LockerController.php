@@ -23,6 +23,17 @@ class LockerController extends AbstractApiController
         $this->lockerRepository = $lockerRepository;
     }
 
+
+    /**
+     * @Rest\Get("/locker/{lockerId}")
+     * @Rest\Options("/locker/{lockerId}")
+     */
+    public function getLocker(int $lockerId): View
+    {
+        $locker = $this->lockerRepository->find($lockerId);
+        return View::create($locker, Response::HTTP_OK);
+    }
+
     /**
      * @Rest\Patch("/locker/{lockerId}")
      * @Rest\Options("/locker/{lockerId}")

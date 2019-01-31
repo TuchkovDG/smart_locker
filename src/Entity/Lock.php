@@ -3,6 +3,10 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\SerializedName;
+
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -34,11 +38,14 @@ class Lock
      * @ORM\Column(type="boolean")
      * @Assert\NotBlank()
      * @Assert\Choice({true, false})
+     * @SerializedName("is_open")
      */
     private $isOpen = false;
 
     /**
+     * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="locks")
+     * @Serializer\Exclude()
      */
     private $user;
 
@@ -46,16 +53,19 @@ class Lock
      * @var Locker
      * @ORM\ManyToOne(targetEntity="App\Entity\Locker", inversedBy="locks")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Exclude()
      */
     private $locker;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @SerializedName("reserved_at")
      */
     private $reservedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @SerializedName("opened_at")
      */
     private $openedAt;
 
@@ -84,6 +94,9 @@ class Lock
         return $this->openedAt;
     }
 
+    /**
+     * @Serializer\VirtualProperty()
+     */
     public function getAddress(): string
     {
         return $this->locker->getAddress();

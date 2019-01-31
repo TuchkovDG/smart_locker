@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -38,6 +39,7 @@ class LockerRequest
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="lockers")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Exclude()
      */
     private $company;
 
@@ -45,11 +47,13 @@ class LockerRequest
      * @var string
      * @ORM\Column(type="integer")
      * @Assert\NotBlank()
+     * @Serializer\SerializedName("lock_count")
      */
     private $lockCount;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("created_at")
      */
     private $createdAt;
 

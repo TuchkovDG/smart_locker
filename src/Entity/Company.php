@@ -63,11 +63,13 @@ class Company implements UserInterface
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("created_at")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("updated_at")
      */
     private $updatedAt;
 

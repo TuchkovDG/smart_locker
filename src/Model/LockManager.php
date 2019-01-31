@@ -5,10 +5,11 @@ namespace App\Model;
 use App\Entity\Lock;
 use App\Entity\User;
 use App\Repository\LockerRepository;
+use App\Repository\LockRepository;
 use App\Repository\UserRepository;
 use FOS\RestBundle\View\View;
 
-class LockReserveManager
+class LockManager
 {
     private const MAX_RESERVED_LOCK_COUNT = 5;
 
@@ -24,10 +25,22 @@ class LockReserveManager
     /** @var LockerRepository */
     private $lockerRepository;
 
-    public function __construct(UserRepository $userRepository, LockerRepository $lockerRepository)
-    {
+    /** @var LockRepository */
+    private $lockRepository;
+
+    public function __construct(
+        UserRepository $userRepository,
+        LockerRepository $lockerRepository,
+        LockRepository $lockRepository
+    ) {
         $this->userRepository = $userRepository;
         $this->lockerRepository = $lockerRepository;
+        $this->lockRepository = $lockRepository;
+    }
+
+    public function isAllowedStatus(int $status): bool
+    {
+        return in_array($status, $this->allowedStatus, true);
     }
 
     public function reserveLock(User $user, Lock $lock): void
@@ -54,8 +67,21 @@ class LockReserveManager
         $this->userRepository->save($user);
     }
 
-    public function isAllowedStatus(int $status): bool
+    public function openLock(Lock $lock): void
     {
-        return in_array($status, $this->allowedStatus, true);
+        if ($lock->isOpen()) {
+            throw new \LogicException('Lock is already opened');
+        }
+        $lock->open();
+        $this->lockRepository->save($lock);
+    }
+
+    public function closeLock(Lock $lock): void
+    {
+        if (!$lock->isOpen()) {
+            throw new \LogicException('Lock is already closed');
+        }
+        $lock->close();
+        $this->lockRepository->save($lock);
     }
 }

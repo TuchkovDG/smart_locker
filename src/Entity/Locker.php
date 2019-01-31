@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -40,21 +41,25 @@ class Locker
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="lockers")
      * @ORM\JoinColumn(nullable=false)
+     * @Serializer\Exclude()
      */
     private $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Lock", mappedBy="locker")
+     * @Serializer\Exclude()
      */
     private $locks;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("created_at")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Serializer\SerializedName("updated_at")
      */
     private $updatedAt;
 

@@ -5,6 +5,6 @@ nelmio_api_doc:
             title: Smart lock
             description: ~
             version: 1.0.0
-    areas: # to filter documented areas
+    areas:
         path_patterns:
-            - ^/company(?!/doc) # Accepts routes under /api except /api/doc
+            - ^/company(?!/doc)

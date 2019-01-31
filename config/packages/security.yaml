@@ -2,17 +2,24 @@ security:
     encoders:
         App\Entity\Company:
             algorithm: bcrypt
+        App\Entity\Admin:
+            algorithm: bcrypt
 
     providers:
-        entity_provider:
+        company_provider:
             entity:
                 class: App\Entity\Company
                 property: email
+        admin_provider:
+            entity:
+                class: App\Entity\Admin
+                property: login
 
     firewalls:
         company_login:
             pattern:  ^/company/login
             methods: [POST]
+            provider: company_provider
             stateless: true
             anonymous: true
             json_login:
@@ -22,15 +29,27 @@ security:
         company_register:
             pattern:  ^/company
             methods: [POST]
+            provider: company_provider
             stateless: true
             anonymous: true
+
+        admin_login:
+            pattern:  ^/admin/login
+            methods: [POST]
+            provider: admin_provider
+            stateless: true
+            anonymous: true
+            json_login:
+                check_path: /admin/login
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
         api:
             pattern:  ^/
             methods: [POST, GET, PATCH, DELETE]
             stateless: true
             anonymous: false
-            provider: entity_provider
+            provider: admin_provider
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator
@@ -38,4 +57,5 @@ security:
     access_control:
         - { path: ^/company/login, methods: [POST], roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/company, methods: [POST], roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login, methods: [POST], roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
