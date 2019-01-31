@@ -1,0 +1,7 @@
+monolog:
+    handlers:
+        iot_controller:
+            type: stream
+            path: "%kernel.logs_dir%/iot_controller.log"
+            level: info
+            channels: [iot_controller]

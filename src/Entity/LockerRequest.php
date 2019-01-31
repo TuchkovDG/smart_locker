@@ -37,7 +37,8 @@ class LockerRequest
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="lockers")
+     * @var Company
+     * @ORM\ManyToOne(targetEntity="App\Entity\Company", inversedBy="lockerRequests")
      * @ORM\JoinColumn(nullable=false)
      * @Serializer\Exclude()
      */
@@ -65,6 +66,11 @@ class LockerRequest
     public function getAddress(): ?string
     {
         return $this->address;
+    }
+
+    public function getCompany(): ?Company
+    {
+        return $this->company;
     }
 
     public function getName(): ?string

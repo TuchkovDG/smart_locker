@@ -6,6 +6,9 @@ security:
             algorithm: bcrypt
 
     providers:
+        chain_provider:
+            chain:
+                providers: [company_provider, admin_provider]
         company_provider:
             entity:
                 class: App\Entity\Company
@@ -49,7 +52,7 @@ security:
             methods: [POST, GET, PATCH, DELETE]
             stateless: true
             anonymous: false
-            provider: admin_provider
+            provider: chain_provider
             guard:
                 authenticators:
                     - lexik_jwt_authentication.jwt_token_authenticator

@@ -20,3 +20,7 @@ services:
     App\EventListener\JWTCreatedListener:
         tags:
             - { name: kernel.event_subscriber }
+
+    App\Controller\IotController:
+        tags:
+            - { name: monolog.logger, channel: iot_controller }

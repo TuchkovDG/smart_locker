@@ -10,7 +10,7 @@ use App\Repository\UserRepository;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 
-use Symfony\Component\HttpFoundation\Request;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -23,16 +23,21 @@ class IotController extends AbstractApiController
     private $userRepository;
 
     /** @var LockManager */
-    private $lockReserveManager;
+    private $lockManager;
+
+    /** @var LoggerInterface */
+    private $logger;
 
     public function __construct(
         LockRepository $lockRepository,
         UserRepository $userRepository,
-        LockManager $lockManager
+        LockManager $lockManager,
+        LoggerInterface $logger
     ) {
         $this->lockRepository = $lockRepository;
         $this->userRepository = $userRepository;
-        $this->lockReserveManager = $lockManager;
+        $this->lockManager = $lockManager;
+        $this->logger = $logger;
     }
 
     /**
@@ -40,7 +45,7 @@ class IotController extends AbstractApiController
      */
     public function getRandomLock(int $status): View
     {
-        if (!$this->lockReserveManager->isAllowedStatus($status)) {
+        if (!$this->lockManager->isAllowedStatus($status)) {
             throw new BadRequestHttpException('Not allowed status with code: ' . $status);
         }
         $randomLock = null;
@@ -52,51 +57,75 @@ class IotController extends AbstractApiController
     }
 
     /**
-     * @Rest\Post("/lock/reserve")
+     * @Rest\Post("/user/{userId}/lock/{lockId}/reserve")
      */
-    public function reserveLock(Request $request): View
+    public function reserveLock(int $userId, int $lockId): View
     {
-        if (!($lockId = $request->get('lock_id'))) {
-            throw new BadRequestHttpException('lock_id is required');
-        }
-        if (!($userId = $request->get('user_id'))) {
-            throw new BadRequestHttpException('user_id is required');
-        }
         if (!($lock = $this->lockRepository->find($lockId))) {
             throw new BadRequestHttpException('Lock with id ' . $lockId . ' is not exist');
         }
-        if (!($user = $this->userRepository->find($lockId))) {
+        if (!($user = $this->userRepository->find($userId))) {
             throw new BadRequestHttpException('User with id ' . $userId . ' is not exist');
         }
-        $this->lockReserveManager->reserveLock($user, $lock);
+        $this->lockManager->reserveLock($user, $lock);
+        $this->logger->info('Lock with ' . $lockId . ' was reserved by user with id ' . $userId);
         return View::create($lock, Response::HTTP_OK);
     }
 
     /**
-     * @Rest\Post("/lock/unreserve")
+     * @Rest\Post("/user/{userId}/lock/{lockId}/unreserve")
      */
-    public function unReserveLock(Request $request): View
+    public function unReserveLock(int $userId, int $lockId): View
     {
-        if (!($lockId = $request->get('lock_id'))) {
-            throw new BadRequestHttpException('lock_id is required');
-        }
-        if (!($userId = $request->get('user_id'))) {
-            throw new BadRequestHttpException('user_id is required');
-        }
         if (!($lock = $this->lockRepository->find($lockId))) {
             throw new BadRequestHttpException('Lock with id ' . $lockId . ' is not exist');
         }
-        if (!($user = $this->userRepository->find($lockId))) {
+        if (!($user = $this->userRepository->find($userId))) {
             throw new BadRequestHttpException('User with id ' . $userId . ' is not exist');
         }
-        $this->lockReserveManager->unReserveLock($user, $lock);
+        $this->lockManager->unReserveLock($user, $lock);
+        $this->logger->info('Lock with ' . $lockId . ' was unreserved by user with id ' . $userId);
         return View::create($lock, Response::HTTP_OK);
     }
 
     /**
-     * @Rest\Post("/user/unreserve_all")
+     * @Rest\Post("/user/{userID}/unreserve_all")
      */
-    public function unReserveAllUserLocks(Request $request): View
+    public function unReserveAllUserLocks(int $userId): View
     {
+        if (!($user = $this->userRepository->find($userId))) {
+            throw new BadRequestHttpException('User with id ' . $userId . ' is not exist');
+        }
+        foreach ($user->getLocks() as $lock) {
+            $this->lockManager->unReserveLock($user, $lock);
+        }
+        $this->logger->info('User with id ' . $userId . ' unreserve all locks');
+        return View::create($user->getLocks(), Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Post("/lock/{lockId}/open")
+     */
+    public function openLock(int $lockId): View
+    {
+        if (!($lock = $this->lockRepository->find($lockId))) {
+            throw new BadRequestHttpException('Lock with id ' . $lockId . ' is not exist');
+        }
+        $this->lockManager->openLock($lock);
+        $this->logger->info('Lock with id ' . $lockId . ' was opened');
+        return View::create($lock, Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Post("/lock/{lockId}/close")
+     */
+    public function close(int $lockId): View
+    {
+        if (!($lock = $this->lockRepository->find($lockId))) {
+            throw new BadRequestHttpException('Lock with id ' . $lockId . ' is not exist');
+        }
+        $this->lockManager->closeLock($lock);
+        $this->logger->info('Lock with id ' . $lockId . ' was closed');
+        return View::create($lock, Response::HTTP_OK);
     }
 }

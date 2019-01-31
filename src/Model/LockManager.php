@@ -63,6 +63,7 @@ class LockManager
             throw new \LogicException('Lock is already unreserved');
         }
         $lock->unReserve();
+        $this->lockRepository->save($lock);
         $user->removeLock($lock);
         $this->userRepository->save($user);
     }

@@ -28,4 +28,9 @@ class LockerRequestRepository extends AbstractRepository
     {
         return $this->getRepository()->find($lockerRequestId);
     }
+
+    public function delete(LockerRequest $lockerRequest): void
+    {
+        $this->deleteEntity($lockerRequest);
+    }
 }

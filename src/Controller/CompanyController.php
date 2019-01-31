@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Company;
 use App\Entity\Locker;
+use App\Entity\LockerRequest;
 use App\Repository\CompanyRepository;
 
 use Doctrine\ORM\EntityNotFoundException;
@@ -96,6 +97,22 @@ class CompanyController extends AbstractApiController
     }
 
     /**
+     * @Rest\Patch("/company/{companyId}/locker_request")
+     * @Rest\Options("/company/{companyId}/locker_request")
+     */
+    public function createLockerRequest(int $companyId, Request $request): View
+    {
+        if (!($company = $this->companyRepository->find($companyId))) {
+            throw new EntityNotFoundException('Company with id ' . $companyId . ' does not exist');
+        }
+        $lockerRequest = new LockerRequest();
+        $this->handleRequest($lockerRequest, $request);
+        $company->addLockerRequest($lockerRequest);
+        $this->companyRepository->save($company);
+        return View::create($lockerRequest, Response::HTTP_OK);
+    }
+
+    /**
      * @Rest\Patch("/company/{companyId}/locker")
      * @Rest\Options("/company/{companyId}/locker")
      */
@@ -108,7 +125,7 @@ class CompanyController extends AbstractApiController
         $this->handleRequest($locker, $request);
         $company->addLocker($locker);
         $this->companyRepository->save($company);
-        return View::create($company, Response::HTTP_OK);
+        return View::create($locker, Response::HTTP_OK);
     }
 
     /**
@@ -131,6 +148,5 @@ class CompanyController extends AbstractApiController
      */
     public function companyLogin(Request $request): Response
     {
-        return new Response();
     }
 }

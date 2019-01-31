@@ -62,6 +62,12 @@ class Company implements UserInterface
     private $lockers;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\LockerRequest", mappedBy="company")
+     * @Serializer\Exclude()
+     */
+    private $lockerRequests;
+
+    /**
      * @ORM\Column(type="datetime")
      * @Serializer\SerializedName("created_at")
      */
@@ -75,6 +81,7 @@ class Company implements UserInterface
 
     public function __construct() {
         $this->lockers = new ArrayCollection();
+        $this->lockerRequests = new  ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,6 +113,12 @@ class Company implements UserInterface
     public function getLockers(): Collection
     {
         return $this->lockers;
+    }
+
+    /** @return Collection|LockerRequest[] */
+    public function getLockerRequests(): Collection
+    {
+        return $this->lockerRequests;
     }
 
     public function getCreatedAt(): ?\DateTime
@@ -143,6 +156,14 @@ class Company implements UserInterface
         if (!$this->lockers->contains($locker)) {
             $this->lockers[] = $locker;
             $locker->setCompany($this);
+        }
+    }
+
+    public function addLockerRequest(LockerRequest $lockerRequest): void
+    {
+        if (!$this->lockerRequests->contains($lockerRequest)) {
+            $this->lockerRequests[] = $lockerRequest;
+            $lockerRequest->setCompany($this);
         }
     }
 

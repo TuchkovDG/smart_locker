@@ -37,7 +37,10 @@ class CompanyRepository extends AbstractRepository
 
     public function save(Company $company): void
     {
-        $this->saveRelatedEntities($company->getLockers());
+        $this->saveRelatedEntities([
+            $company->getLockers(),
+            $company->getLockerRequests(),
+        ]);
         $this->saveEntity($company);
     }
 
